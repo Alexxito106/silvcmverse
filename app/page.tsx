@@ -98,7 +98,7 @@ export default function Home() {
             </p>
 
             <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto font-light">
-              He intentado hacer algo bonico aqui, por ahora podras usar "recuerdos" que es como un albumde fotos, "Mood" que es para escribir como te sientes en cada momento, "Cartas secretas", donde se pueden escribir cartas y si se desea, hacerlas secretas (usando una crontaseña sbs), y flores que es como un jardin para enviar "ramos" virtuales.
+              He intentado hacer algo bonico aqui, por ahora podras usar "recuerdos" que es como un album de fotos, "Mood" que es para escribir como te sientes en cada momento, "Cartas secretas", donde se pueden escribir cartas y si se desea, hacerlas secretas (usando una crontaseña sbs), y flores que es como un jardin para enviar "ramos" virtuales.
             </p>
           </motion.div>
 
