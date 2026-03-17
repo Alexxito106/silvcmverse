@@ -31,7 +31,6 @@ SilviVerse es un espacio mágico dedicado a alguien especial llamado **Silvi**. 
 - Crear notas de emociones cortas
 - Selector de emojis
 - Generador de frases románticas aleatorias
-- Guardado automático en LocalStorage
 - Animaciones al crear
 
 ### 💌 Cartas Secretas

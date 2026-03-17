@@ -30,10 +30,6 @@ pnpm run dev
 
 - Next.js 16 | React 19 | TypeScript | TailwindCSS 4 | Framer Motion
 
-## 🔐 Privacidad
-
-✅ LocalStorage - Sin servidor - Completamente privado
-
 ---
 
 ✨ **Made with ❤️** | SilviVerse v1.0.0 | Marzo 2026

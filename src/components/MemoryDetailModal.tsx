@@ -84,7 +84,6 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
     try {
       await deleteMemory(memory.id);
       onDelete(memory.id);
-      addToast('🗑️ Recuerdo eliminado', 'info');
       setShowDeleteConfirm(false);
       onClose();
     } catch (error) {
