@@ -161,12 +161,12 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
               onClick={handleExport}
               disabled={isDeleting || isExporting}
               className="flex-1 px-3 py-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-sm font-semibold rounded transition-all duration-300 hover:shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
-            >Click
+            >
               {isExporting ? '⏳' : '📥'} Guardar
             </button>
             {onDelete && (
               <button
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
                 disabled={isDeleting || isExporting}
                 className="px-3 py-2 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 text-sm font-semibold rounded transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
               >
