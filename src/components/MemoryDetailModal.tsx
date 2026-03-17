@@ -30,11 +30,19 @@ function exportAsJSON(memory: Memory): void {
 export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, onDelete, onMemoryUpdated }) => {
   const { addToast } = useToast();
   const cardRef = React.useRef<HTMLDivElement>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
   const [showEditModal, setShowEditModal] = React.useState(false);
+
+  // Handle overlay click - only close if clicking directly on overlay, not the modal
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === modalRef.current) {
+      onClose();
+    }
+  };
 
   if (!memory) return null;
 
@@ -121,14 +129,19 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 md:p-0"
-      >
+    <>
+    <AnimatePresence mode="wait">
+      {memory && (
+        <motion.div
+          ref={modalRef}
+          key={`modal-${memory.id}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={handleOverlayClick}
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 md:p-0"
+        >
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -232,22 +245,24 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
             </div>
           </div>
         </motion.div>
-      </motion.div>
-
-      <DeleteConfirmationModal
-        isOpen={showDeleteConfirm}
-        onConfirm={handleDelete}
-        onCancel={() => setShowDeleteConfirm(false)}
-        isLoading={isDeleting}
-      />
-
-      <MemoryEditModal
-        isOpen={showEditModal}
-        memory={memory}
-        onConfirm={handleEditConfirm}
-        onCancel={() => setShowEditModal(false)}
-        isLoading={isUpdating}
-      />
+        </motion.div>
+      )}
     </AnimatePresence>
+
+    <DeleteConfirmationModal
+      isOpen={showDeleteConfirm}
+      onConfirm={handleDelete}
+      onCancel={() => setShowDeleteConfirm(false)}
+      isLoading={isDeleting}
+    />
+
+    <MemoryEditModal
+      isOpen={showEditModal}
+      memory={memory}
+      onConfirm={handleEditConfirm}
+      onCancel={() => setShowEditModal(false)}
+      isLoading={isUpdating}
+    />
+  </>
   );
 };

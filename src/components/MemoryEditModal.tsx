@@ -26,8 +26,10 @@ export const MemoryEditModal: React.FC<MemoryEditModalProps> = ({
     tags: '',
   });
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(true);
+  const modalRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Only update form if modal is open AND memory exists
     if (memory && isOpen) {
       setFormData({
         titulo: memory.titulo,
@@ -40,6 +42,13 @@ export const MemoryEditModal: React.FC<MemoryEditModalProps> = ({
       setError('');
     }
   }, [memory?.id, isOpen]);
+
+  // Prevent modal close on accidental background clicks
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === modalRef.current) {
+      onCancel();
+    }
+  };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,17 +88,19 @@ export const MemoryEditModal: React.FC<MemoryEditModalProps> = ({
     onCancel();
   };
 
-  if (!isOpen || !memory) return null;
-
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={handleCancel}
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
-      >
+    <AnimatePresence mode="wait">
+      {isOpen && memory && (
+        <motion.div
+          ref={modalRef}
+          key={`edit-modal-${memory.id}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={handleOverlayClick}
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+        >
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -235,7 +246,8 @@ export const MemoryEditModal: React.FC<MemoryEditModalProps> = ({
             </div>
           )}
         </motion.div>
-      </motion.div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 };
