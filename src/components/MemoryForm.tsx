@@ -68,7 +68,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
     e.preventDefault();
 
     if (!formData.titulo.trim() || !formData.poema.trim()) {
-      addToast('⚠️ Por favor completa el título y el poema', 'warning');
+      addToast('⚠️ Por favor completa el título y la información', 'warning');
       return;
     }
 
@@ -127,7 +127,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="mb-12 p-8 rounded-2xl bg-gradient-to-br from-pink-100/50 to-purple-100/50 dark:from-pink-900/30 dark:to-purple-900/30 border border-white/50 dark:border-white/10 backdrop-blur-sm"
+      className="mb-12 p-8 rounded-2xl bg-gradient-to-br from-pink-100/50 to-purple-100/50 dark:from-pink-900/30 dark:to-purple-900/30 border border-white/50 dark:border-white/10 backdrop-blur-sm md:mb-12 pb-28 md:pb-8"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
@@ -200,12 +200,12 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
         {/* Poem */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Poema 💭
+            Información 💭
           </label>
           <textarea
             value={formData.poema}
             onChange={(e) => setFormData({ ...formData, poema: e.target.value })}
-            placeholder="Escribe tu poema o descripción del recuerdo..."
+            placeholder="Escribe un 'poema' o descripción del recuerdo..."
             disabled={isLoading}
             rows={5}
             className="w-full px-4 py-3 rounded-lg bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white disabled:opacity-50"
@@ -227,8 +227,8 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
           />
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-4 pt-4">
+        {/* Buttons - Sticky on mobile */}
+        <div className="fixed bottom-0 left-0 right-0 md:relative md:flex gap-4 pt-4 md:pt-6 bg-gradient-to-br from-pink-100/50 to-purple-100/50 dark:from-pink-900/30 dark:to-purple-900/30 md:bg-transparent p-4 md:p-0 flex gap-4 border-t md:border-t-0 border-white/20 md:border-white/0">
           <button
             type="submit"
             disabled={isLoading}

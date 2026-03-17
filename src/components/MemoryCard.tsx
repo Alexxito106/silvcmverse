@@ -4,6 +4,7 @@ import { toPng } from 'html-to-image';
 import { Memory } from '@/types';
 import { useToast } from '@/providers/ToastProvider';
 import { deleteMemory } from '@/lib/memories';
+import { MemoryDetailModal } from './MemoryDetailModal';
 
 interface MemoryCardProps {
   memory: Memory;
@@ -31,6 +32,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
+  const [showDetail, setShowDetail] = React.useState(false);
 
   const handleExport = async () => {
     if (!cardRef.current) return;
@@ -82,13 +84,15 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
     }
   };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, rotateZ: -2 }}
-      animate={{ opacity: 1, y: 0, rotateZ: 0 }}
-      whileHover={{ rotateZ: 1, y: -5, scale: 1.02 }}
-      transition={{ duration: 0.5, type: 'spring' }}
-      className="group h-full"
+  ret>
+      <motion.div
+        initial={{ opacity: 0, y: 20, rotateZ: -2 }}
+        animate={{ opacity: 1, y: 0, rotateZ: 0 }}
+        whileHover={{ rotateZ: 1, y: -5, scale: 1.02 }}
+        transition={{ duration: 0.5, type: 'spring' }}
+        className="group h-full cursor-pointer"
+        onClick={() => setShowDetail(true)}
+        className="group h-full"
     >
       <div
         ref={cardRef}
@@ -149,7 +153,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
             <button
               onClick={handleExport}
               disabled={isDeleting || isExporting}
-              className="flex-1 px-3 py-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-sm font-semibold rounded transition-all duration-300 hover:shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 disabled:opacity-50"
+              className="flex-1 px-3 py-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-sm font-semibold rounded transition-all duration-300 hover:shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
             >
               {isExporting ? '⏳' : '📥'} Guardar
             </button>
@@ -157,14 +161,20 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
               <button
                 onClick={handleDelete}
                 disabled={isDeleting || isExporting}
-                className="px-3 py-2 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 text-sm font-semibold rounded transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 disabled:opacity-50"
+                className="px-3 py-2 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 text-sm font-semibold rounded transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
               >
                 {isDeleting ? '⏳' : '🗑️'}
               </button>
             )}
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      <MemoryDetailModal 
+        memory={showDetail ? memory : null}
+        onClose={() => setShowDetail(false)}
+        onDelete={onDelete}
+      />
+    </>
   );
 };
