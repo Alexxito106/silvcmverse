@@ -92,7 +92,8 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
           .split(',')
           .map((t) => t.trim())
           .filter((t) => t),
-        imageUrl
+        imageUrl,
+        formData.fecha
       );
 
       onSave(newMemory);
@@ -139,6 +140,20 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
             value={formData.titulo}
             onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
             placeholder="Ej: Nuestro primer atardecer..."
+            disabled={isLoading}
+            className="w-full px-4 py-3 rounded-lg bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 dark:text-white disabled:opacity-50"
+          />
+        </div>
+
+        {/* Date */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            Fecha del Recuerdo 📅
+          </label>
+          <input
+            type="date"
+            value={formData.fecha}
+            onChange={(e) => setFormData({ ...formData, fecha: e.target.value })}
             disabled={isLoading}
             className="w-full px-4 py-3 rounded-lg bg-white/80 dark:bg-white/10 border border-white/50 dark:border-white/20 focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-900 dark:text-white disabled:opacity-50"
           />

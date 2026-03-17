@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Memory } from '@/types';
 import { toPng } from 'html-to-image';
 import { useToast } from '@/providers/ToastProvider';
-import { deleteMemory } from '@/lib/memories';
+import { deleteMemory, updateMemory } from '@/lib/memories';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
+import { MemoryEditModal } from './MemoryEditModal';
 
 interface MemoryDetailModalProps {
   memory: Memory | null;
@@ -31,8 +32,15 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [isUpdating, setIsUpdating] = React.useState(false);
+  const [showEditModal, setShowEditModal] = React.useState(false);
+  const [displayMemory, setDisplayMemory] = React.useState<Memory | null>(memory);
 
   if (!memory) return null;
+
+  React.useEffect(() => {
+    setDisplayMemory(memory);
+  }, [memory]);
 
   const handleExport = async () => {
     if (!cardRef.current) return;
@@ -88,6 +96,28 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
     setShowDeleteConfirm(true);
   };
 
+  const handleEditConfirm = async (updatedData: Partial<Memory>) => {
+    if (!memory) return;
+    setIsUpdating(true);
+    try {
+      const updated = await updateMemory(memory.id, {
+        title: updatedData.titulo,
+        poem: updatedData.poema,
+        fecha: updatedData.fecha,
+        tags: updatedData.tags,
+      });
+      setDisplayMemory(updated);
+      addToast('✏️ Recuerdo actualizado', 'success');
+      setShowEditModal(false);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      console.error('Error updating memory:', errorMessage);
+      addToast(`❌ Error al actualizar: ${errorMessage}`, 'error');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -121,11 +151,11 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
             className="p-8 bg-white dark:bg-gray-900 space-y-6"
           >
             {/* Image */}
-            {memory.imagen_url && (
+            {displayMemory?.imagen_url && (
               <div className="w-full rounded-xl overflow-hidden shadow-lg">
                 <img
-                  src={memory.imagen_url}
-                  alt={memory.titulo}
+                  src={displayMemory.imagen_url}
+                  alt={displayMemory.titulo}
                   className="w-full h-auto object-cover"
                 />
               </div>
@@ -134,31 +164,31 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
             {/* Date */}
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-full">
-                📅 {memory.fecha}
+                📅 {displayMemory?.fecha}
               </span>
-              {memory.imagen_url && <span className="text-2xl">📸</span>}
+              {displayMemory?.imagen_url && <span className="text-2xl">📸</span>}
             </div>
 
             {/* Title */}
             <div>
               <h1 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                {memory.titulo}
+                {displayMemory?.titulo}
               </h1>
             </div>
 
             {/* Poem/Content */}
             <div>
               <p className="text-gray-700 dark:text-gray-300 font-light text-lg leading-relaxed whitespace-pre-wrap">
-                {memory.poema}
+                {displayMemory?.poema}
               </p>
             </div>
 
             {/* Tags */}
-            {memory.tags.length > 0 && (
+            {displayMemory?.tags.length! > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3">Etiquetas</h3>
                 <div className="flex flex-wrap gap-2">
-                  {memory.tags.map((tag, idx) => (
+                  {displayMemory?.tags.map((tag, idx) => (
                     <span
                       key={idx}
                       className="bg-purple-100 dark:bg-purple-900/50 text-purple-900 dark:text-purple-100 px-4 py-2 rounded-full text-sm font-medium"
@@ -180,13 +210,22 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
                 {isExporting ? '⏳ Guardando...' : '📥 Guardar como Imagen'}
               </button>
               {onDelete && (
-                <button
-                  onClick={handleDeleteClick}
-                  disabled={isDeleting || isExporting}
-                  className="px-6 py-3 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 font-semibold rounded-lg transition-all disabled:opacity-50"
-                >
-                  {isDeleting ? '⏳' : '🗑️ Eliminar'}
-                </button>
+                <>
+                  <button
+                    onClick={() => setShowEditModal(true)}
+                    disabled={isUpdating || isExporting || isDeleting}
+                    className="px-6 py-3 bg-blue-400/20 hover:bg-blue-400/40 text-blue-700 dark:text-blue-300 font-semibold rounded-lg transition-all disabled:opacity-50"
+                  >
+                    {isUpdating ? '⏳' : '✏️ Editar'}
+                  </button>
+                  <button
+                    onClick={handleDeleteClick}
+                    disabled={isDeleting || isExporting}
+                    className="px-6 py-3 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 font-semibold rounded-lg transition-all disabled:opacity-50"
+                  >
+                    {isDeleting ? '⏳' : '🗑️ Eliminar'}
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -198,6 +237,14 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
         isLoading={isDeleting}
+      />
+
+      <MemoryEditModal
+        isOpen={showEditModal}
+        memory={displayMemory}
+        onConfirm={handleEditConfirm}
+        onCancel={() => setShowEditModal(false)}
+        isLoading={isUpdating}
       />
     </AnimatePresence>
   );

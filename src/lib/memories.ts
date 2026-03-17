@@ -19,7 +19,7 @@ export async function fetchMemories(): Promise<Memory[]> {
     const { data, error } = await supabase
       .from('recuerdos')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('fecha', { ascending: false });
 
     if (error) {
       console.error('Error fetching memories:', error);
@@ -81,7 +81,8 @@ export async function createMemory(
   title: string,
   poem: string,
   tags: string[],
-  imageUrl?: string
+  imageUrl?: string,
+  fecha?: string
 ): Promise<Memory> {
   try {
     const { data, error } = await supabase
@@ -92,7 +93,7 @@ export async function createMemory(
           poema: poem,
           tags: tags,
           imagen_url: imageUrl,
-          fecha: new Date().toISOString().split('T')[0],
+          fecha: fecha || new Date().toISOString().split('T')[0],
         },
       ])
       .select()
@@ -169,6 +170,7 @@ export async function updateMemory(
     title?: string;
     poem?: string;
     tags?: string[];
+    fecha?: string;
     imageUrl?: string;
   }
 ): Promise<Memory> {
@@ -178,6 +180,7 @@ export async function updateMemory(
     if (updates.title) updateData.titulo = updates.title;
     if (updates.poem) updateData.poema = updates.poem;
     if (updates.tags) updateData.tags = updates.tags;
+    if (updates.fecha) updateData.fecha = updates.fecha;
     if (updates.imageUrl) updateData.imagen_url = updates.imageUrl;
 
     const { data, error } = await supabase
