@@ -1,6 +1,6 @@
-# 💕 SilviVerse - Un Universo Digital de Amor y Recuerdos
+# 💕 SilviVerse - Un Universo Digital de Amor, Amistad y Recuerdos
 
-**SilviVerse** es una aplicación web romántica e interactiva diseñada como un museo digital de recuerdos, emociones, cartas secretas y un jardín de flores interactivo.
+**SilviVerse** es una aplicación web interactiva diseñada como un museo digital de recuerdos, emociones, cartas secretas y un jardín de flores interactivo, especialmente para Silvi, una mujer maravillosa.
 
 ## ✨ Características Principales
 
