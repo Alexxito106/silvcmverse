@@ -26,7 +26,7 @@ const crimsonText = Crimson_Text({
 });
 
 export const metadata: Metadata = {
-  title: "SilviVerse - Un Universo de Recuerdos y Amor",
+  title: "SilviVerse - Amistad, Recuerdos y Amor",
   description: "Un lugar mágico dedicado a alguien especial. Guarda recuerdos, emociones, cartas y flores en un universo digital romántico.",
 };
 
