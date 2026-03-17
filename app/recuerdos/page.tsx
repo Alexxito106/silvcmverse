@@ -38,6 +38,12 @@ export default function RecuerdosPage() {
     }
   };
 
+  const handleMemoryUpdated = async () => {
+    // Refresh the memories list from Supabase after an update
+    const data = await fetchMemories();
+    setMemories(data);
+  };
+
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-12 md:pt-28">
       <div className="max-w-7xl mx-auto">
@@ -82,7 +88,11 @@ export default function RecuerdosPage() {
           <AnimatePresence>
             {memories.map((memory) => (
               <div key={memory.id}>
-                <MemoryCard memory={memory} onDelete={handleDeleteMemory} />
+                <MemoryCard 
+                  memory={memory} 
+                  onDelete={handleDeleteMemory}
+                  onMemoryUpdated={handleMemoryUpdated}
+                />
               </div>
             ))}
           </AnimatePresence>

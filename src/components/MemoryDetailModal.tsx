@@ -11,6 +11,7 @@ interface MemoryDetailModalProps {
   memory: Memory | null;
   onClose: () => void;
   onDelete?: (id: string) => void;
+  onMemoryUpdated?: () => Promise<void>;
 }
 
 function exportAsJSON(memory: Memory): void {
@@ -26,7 +27,7 @@ function exportAsJSON(memory: Memory): void {
   URL.revokeObjectURL(url);
 }
 
-export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, onDelete }) => {
+export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, onDelete, onMemoryUpdated }) => {
   const { addToast } = useToast();
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -103,6 +104,12 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
       });
       addToast('✏️ Recuerdo actualizado', 'success');
       setShowEditModal(false);
+      
+      // Refresh parent component's memory list after successful update
+      if (onMemoryUpdated) {
+        await onMemoryUpdated();
+      }
+      
       onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';

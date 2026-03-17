@@ -177,11 +177,19 @@ export async function updateMemory(
   try {
     const updateData: any = {};
 
-    if (updates.title) updateData.titulo = updates.title;
-    if (updates.poem) updateData.poema = updates.poem;
-    if (updates.tags) updateData.tags = updates.tags;
-    if (updates.fecha) updateData.fecha = updates.fecha;
-    if (updates.imageUrl) updateData.imagen_url = updates.imageUrl;
+    // Map field names from update object to database column names
+    if (updates.title !== undefined) updateData.titulo = updates.title;
+    if (updates.poem !== undefined) updateData.poema = updates.poem;
+    if (updates.tags !== undefined) updateData.tags = updates.tags;
+    if (updates.fecha !== undefined) updateData.fecha = updates.fecha;
+    if (updates.imageUrl !== undefined) updateData.imagen_url = updates.imageUrl;
+
+    // Safety check: ensure we're updating at least one field
+    if (Object.keys(updateData).length === 0) {
+      throw new Error('No fields to update');
+    }
+
+    console.log('Updating memory with data:', updateData);
 
     const { data, error } = await supabase
       .from('recuerdos')

@@ -10,6 +10,7 @@ import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 interface MemoryCardProps {
   memory: Memory;
   onDelete?: (id: string) => void;
+  onMemoryUpdated?: () => Promise<void>;
 }
 
 /**
@@ -28,7 +29,7 @@ function exportAsJSON(memory: Memory): void {
   URL.revokeObjectURL(url);
 }
 
-export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
+export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete, onMemoryUpdated }) => {
   const { addToast } = useToast();
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -190,6 +191,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
         memory={showDetail ? memory : null}
         onClose={() => setShowDetail(false)}
         onDelete={onDelete}
+        onMemoryUpdated={onMemoryUpdated}
       />
     </>
   );
