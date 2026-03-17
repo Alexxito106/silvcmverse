@@ -175,17 +175,23 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
               <button
                 onClick={handleExport}
                 disabled={isDeleting || isExporting}
-                className="flex-1 px-6 Clickpy-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg disabled:opacity-50"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg disabled:opacity-50"
               >
                 {isExporting ? '⏳ Guardando...' : '📥 Guardar como Imagen'}
               </button>
               {onDelete && (
                 <button
-                  onClick={handleDelete}
+                  onClick={handleDeleteClick}
                   disabled={isDeleting || isExporting}
                   className="px-6 py-3 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 font-semibold rounded-lg transition-all disabled:opacity-50"
                 >
                   {isDeleting ? '⏳' : '🗑️ Eliminar'}
+                </button>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
 
       <DeleteConfirmationModal
         isOpen={showDeleteConfirm}
@@ -193,12 +199,6 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
         onCancel={() => setShowDeleteConfirm(false)}
         isLoading={isDeleting}
       />
-                </button>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
     </AnimatePresence>
   );
 };

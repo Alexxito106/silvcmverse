@@ -185,6 +185,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
         onCancel={() => setShowDeleteConfirm(false)}
         isLoading={isDeleting}
       />
+
       <MemoryDetailModal 
         memory={showDetail ? memory : null}
         onClose={() => setShowDetail(false)}
