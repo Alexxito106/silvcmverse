@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💕 SilviVerse - Un Universo Digital de Amor y Recuerdos
 
-## Getting Started
+**SilviVerse** es una aplicación web romántica e interactiva diseñada como un museo digital de recuerdos, emociones, cartas secretas y un jardín de flores interactivo.
 
-First, run the development server:
+## ✨ Características Principales
+
+- 📝 **Recuerdos**: Galería con exportación a PNG
+- 💭 **Sensaciones**: Notas emocionales con emojis
+- 💌 **Cartas Secretas**: Con contraseña mágica (`silvi`)
+- 🌹 **Flores**: Jardín interactivo
+- ✨ **Animaciones**: Partículas y transiciones suaves
+- 📱 **Mobile-First**: Completamente responsivo
+
+## 🚀 Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd verse
+pnpm install
+pnpm run dev
+# Abre http://localhost:3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📚 Documentación
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [SILVIVERSE_README.md](./SILVIVERSE_README.md) - Guía completa
+- [TECHNICAL_GUIDE.md](./TECHNICAL_GUIDE.md) - Arquitectura técnica  
+- [DEMO_GUIDE.md](./DEMO_GUIDE.md) - Tour (3 minutos)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+- Next.js 16 | React 19 | TypeScript | TailwindCSS 4 | Framer Motion
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Privacidad
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+✅ LocalStorage - Sin servidor - Completamente privado
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+✨ **Made with ❤️** | SilviVerse v1.0.0 | Marzo 2026

@@ -1,7 +1,12 @@
 const config = {
   plugins: {
-    "@tailwindcss/postcss": {},
+    'postcss-color-function': {},
+    '@tailwindcss/postcss': {},
   },
 };
 
 export default config;
+
+
+
+
