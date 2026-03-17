@@ -103,8 +103,7 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
       });
       addToast('✏️ Recuerdo actualizado', 'success');
       setShowEditModal(false);
-      onDelete?.(memory.id);
-      onDelete = () => {};
+      onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       console.error('Error updating memory:', errorMessage);
