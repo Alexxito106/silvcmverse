@@ -84,7 +84,8 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
     }
   };
 
-  ret>
+  return (
+    <>
       <motion.div
         initial={{ opacity: 0, y: 20, rotateZ: -2 }}
         animate={{ opacity: 1, y: 0, rotateZ: 0 }}
@@ -92,12 +93,11 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
         transition={{ duration: 0.5, type: 'spring' }}
         className="group h-full cursor-pointer"
         onClick={() => setShowDetail(true)}
-        className="group h-full"
-    >
-      <div
-        ref={cardRef}
-        className="relative bg-white dark:bg-gray-900 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col border border-gray-100 dark:border-gray-800"
       >
+        <div
+          ref={cardRef}
+          className="relative bg-white dark:bg-gray-900 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col border border-gray-100 dark:border-gray-800"
+        >
         {/* Image Section - Polaroid Style */}
         {memory.imagen_url ? (
           <div className="relative w-full h-64 bg-gradient-to-br from-pink-100 to-purple-100 dark:from-pink-900/20 dark:to-purple-900/20 overflow-hidden">
@@ -168,6 +168,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
             )}
           </div>
         </div>
+      </div>
       </motion.div>
 
       <MemoryDetailModal 
