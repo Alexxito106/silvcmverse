@@ -102,7 +102,6 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      addToast('✨ Recuerdo guardado con amor en la nube', 'success');
     } catch (error) {
       console.error('Error saving memory:', error);
       addToast(
