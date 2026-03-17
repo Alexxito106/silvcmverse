@@ -39,7 +39,7 @@ export const MemoryEditModal: React.FC<MemoryEditModalProps> = ({
       setPassword('');
       setError('');
     }
-  }, [memory, isOpen]);
+  }, [memory?.id, isOpen]);
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();

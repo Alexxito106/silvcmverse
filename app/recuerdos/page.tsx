@@ -20,11 +20,11 @@ export default function RecuerdosPage() {
       setMemories(data);
     };
     loadMemories();
-  }, [fetchMemories]);
+  }, []);
 
   const handleSaveMemory = async (memory: Memory) => {
     setMemories([memory, ...memories]);
-    addToast('✨ Recuerdo guardado con amor', 'success');
+    addToast('✨ Recuerdo guardado de alguna forma', 'success');
     setIsAddingMemory(false);
   };
 
