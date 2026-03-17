@@ -5,6 +5,7 @@ import { Memory } from '@/types';
 import { useToast } from '@/providers/ToastProvider';
 import { deleteMemory } from '@/lib/memories';
 import { MemoryDetailModal } from './MemoryDetailModal';
+import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 
 interface MemoryCardProps {
   memory: Memory;
@@ -33,6 +34,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const [showDetail, setShowDetail] = React.useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
   const handleExport = async () => {
     if (!cardRef.current) return;
@@ -75,6 +77,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
       await deleteMemory(memory.id);
       onDelete(memory.id);
       addToast('🗑️ Recuerdo eliminado', 'info');
+      setShowDeleteConfirm(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       console.error('Error deleting memory:', errorMessage);
@@ -82,6 +85,10 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
   };
 
   return (
@@ -154,7 +161,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
               onClick={handleExport}
               disabled={isDeleting || isExporting}
               className="flex-1 px-3 py-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-sm font-semibold rounded transition-all duration-300 hover:shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
-            >
+            >Click
               {isExporting ? '⏳' : '📥'} Guardar
             </button>
             {onDelete && (
@@ -171,6 +178,13 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete }) => {
       </div>
       </motion.div>
 
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirm}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        isLoading={isDeleting}
+      />
       <MemoryDetailModal 
         memory={showDetail ? memory : null}
         onClose={() => setShowDetail(false)}

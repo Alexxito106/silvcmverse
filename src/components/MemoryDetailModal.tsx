@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Memory } from '@/types';
 import { toPng } from 'html-to-image';
 import { useToast } from '@/providers/ToastProvider';
+import { deleteMemory } from '@/lib/memories';
+import { DeleteConfirmationModal } from './DeleteConfirmationModal';
 
 interface MemoryDetailModalProps {
   memory: Memory | null;
@@ -28,6 +30,7 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
   if (!memory) return null;
 
@@ -67,8 +70,10 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
     if (!onDelete) return;
     setIsDeleting(true);
     try {
+      await deleteMemory(memory.id);
       onDelete(memory.id);
       addToast('🗑️ Recuerdo eliminado', 'info');
+      setShowDeleteConfirm(false);
       onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
@@ -77,6 +82,10 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
   };
 
   return (
@@ -166,7 +175,7 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
               <button
                 onClick={handleExport}
                 disabled={isDeleting || isExporting}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg disabled:opacity-50"
+                className="flex-1 px-6 Clickpy-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg disabled:opacity-50"
               >
                 {isExporting ? '⏳ Guardando...' : '📥 Guardar como Imagen'}
               </button>
@@ -177,6 +186,13 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, on
                   className="px-6 py-3 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 font-semibold rounded-lg transition-all disabled:opacity-50"
                 >
                   {isDeleting ? '⏳' : '🗑️ Eliminar'}
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirm}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        isLoading={isDeleting}
+      />
                 </button>
               )}
             </div>
