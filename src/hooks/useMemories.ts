@@ -13,7 +13,7 @@ export const useMemories = () => {
       const { data, error: err } = await supabase
         .from('recuerdos')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('fecha', { ascending: false });
 
       if (err) throw err;
       return data || [];
