@@ -113,30 +113,7 @@ export default function Home() {
                 Explorar SilviVerse
               </motion.button>
             </Link>
-          </motion.div>
-
-          {/* Features grid */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-            {[
-              { icon: '📝', title: 'Recuerdos', desc: 'Galería de "momentos" especiales' },
-              { icon: '💭', title: 'Mood', desc: 'Notas de emociones' },
-              { icon: '💌', title: 'Cartas', desc: 'Mensajes secretos o no' },
-              { icon: '🌹', title: 'Flores', desc: 'Jardín interactivo (por hacer algo más)' },
-            ].map((feature, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -5 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-pink-100/30 to-purple-100/30 dark:from-pink-900/20 dark:to-purple-900/20 border border-white/50 dark:border-white/10 backdrop-blur-sm text-center hover:shadow-lg transition-all"
-              >
-                <div className="text-4xl mb-2">{feature.icon}</div>
-                <h3 className="font-serif font-bold text-lg text-gray-900 dark:text-white mb-1">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
+          </motion.div>        
 
           {/* Navigation sections */}
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -163,7 +140,7 @@ export default function Home() {
                   💭 Mood
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300">
-                  Expresa tus emociones en pequeñas notas.
+                  Expresa tus emociones, o lo que desees en pequeñas notas.
                 </p>
               </motion.div>
             </Link>
@@ -177,7 +154,7 @@ export default function Home() {
                   💌 Cartas Secretas
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300">
-                  Escribe mensajes que se revelan con magia. Incluye una funcion con contraseña para secretos ocultos.
+                  Escribe mensajes o más bien cartas. Incluye una funcion con contraseña para secretos ocultos.
                 </p>
               </motion.div>
             </Link>
@@ -191,7 +168,7 @@ export default function Home() {
                   🌹 Jardín de Flores
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300">
-                  Cultiva un jardín interactivo. Cada flor que plantes "crecerá" en este lugar.
+                  Cultiva un "jardín interactivo". Cada flor que plantes sera como mandar un recuerdo mediante un "ramo".
                 </p>
               </motion.div>
             </Link>

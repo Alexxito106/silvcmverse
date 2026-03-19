@@ -89,7 +89,7 @@ export default function CartasPage() {
             💌 Cartas Secretas
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Escribe mensajes protegidos con contraseña. Cada carta es un tesoro guardado en la nube.
+            Escribe cartas protegidas con contraseña. Cada carta es un tesoro edsperando ser abiertos.
           </p>
         </motion.div>
 
