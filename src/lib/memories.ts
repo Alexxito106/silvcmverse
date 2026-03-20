@@ -49,25 +49,51 @@ export async function uploadMemoryImage(
   memoryId: string
 ): Promise<string> {
   try {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${memoryId}.${fileExt}`;
+    console.log('Starting image upload:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      memoryId
+    });
+
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    // Normalize file extension
+    const extMap: { [key: string]: string } = {
+      'jpeg': 'jpg',
+      'png': 'png',
+      'webp': 'webp',
+      'gif': 'gif'
+    };
+    const normalizedExt = extMap[fileExt] || 'jpg';
+    const fileName = `${memoryId}.${normalizedExt}`;
     const filePath = `memories/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
+    // Convert File to Blob if needed (better mobile support)
+    const blob = new Blob([file], { type: file.type || 'image/jpeg' });
+    
+    console.log('Uploading to path:', filePath);
+
+    const { error: uploadError, data } = await supabase.storage
       .from('recuerdos')
-      .upload(filePath, file, { upsert: true });
+      .upload(filePath, blob, { 
+        upsert: true,
+        contentType: file.type || 'image/jpeg'
+      });
 
     if (uploadError) {
-      console.error('Error uploading image:', uploadError);
-      throw uploadError;
+      console.error('Supabase upload error:', uploadError);
+      throw new Error(`Upload failed: ${uploadError.message}`);
     }
 
+    console.log('Upload successful, getting public URL');
+
     // Get public URL
-    const { data } = supabase.storage
+    const { data: urlData } = supabase.storage
       .from('recuerdos')
       .getPublicUrl(filePath);
 
-    return data.publicUrl;
+    console.log('Public URL obtained:', urlData.publicUrl);
+    return urlData.publicUrl;
   } catch (error) {
     console.error('Failed to upload image:', error);
     throw error;

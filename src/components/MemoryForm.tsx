@@ -74,7 +74,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with data:', { formData, imageFile });
+    console.log('🔹 Form submitted with data:', { formData, imageFile });
 
     if (!formData.titulo.trim() || !formData.poema.trim()) {
       addToast('⚠️ Por favor completa el título y la información', 'warning');
@@ -86,22 +86,39 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
     try {
       let imageUrl: string | undefined = undefined;
 
-      // Upload image if selected
+      // Upload image if selected with retry logic for mobile
       if (imageFile) {
-        console.log('Uploading image:', imageFile.name, imageFile.size);
+        console.log('🔹 Image file detected, starting upload:', imageFile.name, imageFile.size);
         addToast('📸 Subiendo imagen a la nube...', 'info');
         const tempId = Date.now().toString();
-        try {
-          imageUrl = await uploadMemoryImage(imageFile, tempId);
-          console.log('Image uploaded successfully:', imageUrl);
-        } catch (imageError) {
-          console.error('Image upload failed:', imageError);
-          addToast('⚠️ Error al subir la imagen, guardando sin ella', 'warning');
+        
+        let retries = 0;
+        const maxRetries = 2;
+        
+        while (retries < maxRetries) {
+          try {
+            console.log(`🔹 Upload attempt ${retries + 1}/${maxRetries}`);
+            imageUrl = await uploadMemoryImage(imageFile, tempId);
+            console.log('✅ Image uploaded successfully:', imageUrl);
+            break;
+          } catch (imageError) {
+            retries++;
+            console.error(`❌ Upload attempt ${retries} failed:`, imageError);
+            
+            if (retries < maxRetries) {
+              console.log(`🔄 Retrying... (${maxRetries - retries} retries left)`);
+              addToast(`🔄 Reintentando carga de imagen (intento ${retries})...`, 'info');
+              await new Promise(resolve => setTimeout(resolve, 1500)); // Wait 1.5s before retry
+            } else {
+              console.warn('⚠️ Image upload failed after retries, continuing without image');
+              addToast('⚠️ No se pudo subir la imagen, guardando recuerdo sin ella', 'warning');
+            }
+          }
         }
       }
 
       // Create memory record in Supabase
-      console.log('Creating memory with:', {
+      console.log('🔹 Creating memory with:', {
         titulo: formData.titulo,
         poema: formData.poema,
         fecha: formData.fecha,
@@ -120,8 +137,11 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
         formData.fecha
       );
 
-      console.log('Memory created successfully:', newMemory);
+      console.log('✅ Memory created successfully:', newMemory);
+      addToast('✨ ¡Recuerdo guardado correctamente!', 'success');
       onSave(newMemory);
+      
+      // Reset form
       setFormData({ titulo: '', poema: '', fecha: new Date().toISOString().split('T')[0], tags: '' });
       setImageFile(null);
       setImagePreview(null);
@@ -129,10 +149,11 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
         fileInputRef.current.value = '';
       }
     } catch (error) {
-      console.error('Error saving memory:', error);
+      console.error('❌ Error saving memory:', error);
       const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+      console.error('Full error object:', error);
       addToast(
-        `❌ Error al guardar: ${errorMsg}`,
+        `❌ Error: ${errorMsg.substring(0, 50)}...`,
         'error'
       );
     } finally {
@@ -271,7 +292,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
         </div>
 
         {/* Buttons - Sticky on mobile */}
-        <div className="fixed bottom-0 left-0 right-0 md:relative md:flex gap-4 pt-4 md:pt-6 bg-gradient-to-t from-pink-100 to-pink-100/80 dark:from-pink-900/50 dark:to-pink-900/20 md:bg-transparent p-4 md:p-0 flex gap-4 border-t md:border-t-0 border-white/30 md:border-white/0 z-40">
+        <div className="fixed bottom-0 left-0 right-0 md:relative md:flex gap-4 pt-4 md:pt-6 bg-gradient-to-t from-pink-100 to-pink-100/80 dark:from-pink-900/50 dark:to-pink-900/20 md:bg-transparent p-4 md:p-0 flex flex-col md:flex-row gap-3 md:gap-4 border-t md:border-t-0 border-white/30 md:border-white/0 z-40">
           <button
             type="submit"
             disabled={isLoading}
@@ -291,6 +312,19 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
               '💾 Guardar Recuerdo'
             )}
           </button>
+          {imageFile && (
+            <button
+              type="button"
+              onClick={() => {
+                removeImage();
+                addToast('📸 Imagen removida. Ahora podrás guardar sin ella', 'info');
+              }}
+              disabled={isLoading}
+              className="px-4 py-4 md:py-3 md:px-6 bg-orange-400/30 hover:bg-orange-400/50 dark:hover:bg-orange-400/40 text-orange-700 dark:text-orange-300 font-semibold rounded-lg transition-all disabled:opacity-50 text-sm md:text-base active:scale-95 md:active:scale-100"
+            >
+              ⚠️ Sin imagen
+            </button>
+          )}
           <button
             type="button"
             onClick={onCancel}
