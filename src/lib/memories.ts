@@ -56,28 +56,23 @@ export async function uploadMemoryImage(
       memoryId
     });
 
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    // Normalize file extension
-    const extMap: { [key: string]: string } = {
-      'jpeg': 'jpg',
-      'png': 'png',
-      'webp': 'webp',
-      'gif': 'gif'
-    };
-    const normalizedExt = extMap[fileExt] || 'jpg';
-    const fileName = `${memoryId}.${normalizedExt}`;
+    // Get file extension from filename
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    if (!fileExt) {
+      throw new Error('No file extension found');
+    }
+
+    const fileName = `${memoryId}.${fileExt}`;
     const filePath = `memories/${fileName}`;
-
-    // Convert File to Blob if needed (better mobile support)
-    const blob = new Blob([file], { type: file.type || 'image/jpeg' });
     
-    console.log('Uploading to path:', filePath);
+    console.log('Uploading to path:', filePath, 'with mime type:', file.type);
 
-    const { error: uploadError, data } = await supabase.storage
+    // Upload file directly (File is already a Blob)
+    const { error: uploadError } = await supabase.storage
       .from('recuerdos')
-      .upload(filePath, blob, { 
+      .upload(filePath, file, { 
         upsert: true,
-        contentType: file.type || 'image/jpeg'
+        contentType: file.type
       });
 
     if (uploadError) {
@@ -92,10 +87,14 @@ export async function uploadMemoryImage(
       .from('recuerdos')
       .getPublicUrl(filePath);
 
-    console.log('Public URL obtained:', urlData.publicUrl);
+    if (!urlData?.publicUrl) {
+      throw new Error('Failed to get public URL');
+    }
+
+    console.log('✅ Public URL obtained:', urlData.publicUrl);
     return urlData.publicUrl;
   } catch (error) {
-    console.error('Failed to upload image:', error);
+    console.error('❌ Failed to upload image:', error);
     throw error;
   }
 }
