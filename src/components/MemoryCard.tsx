@@ -34,6 +34,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete, onMemo
   const cardRef = React.useRef<HTMLDivElement>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
+  const [isDownloadingPhoto, setIsDownloadingPhoto] = React.useState(false);
   const [showDetail, setShowDetail] = React.useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
@@ -90,6 +91,41 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete, onMemo
 
   const handleDeleteClick = () => {
     setShowDeleteConfirm(true);
+  };
+
+  const handleDownloadPhoto = async () => {
+    if (!memory.imagen_url) {
+      addToast('❌ Esta foto no tiene imagen', 'error');
+      return;
+    }
+
+    setIsDownloadingPhoto(true);
+    try {
+      // Fetch the image
+      const response = await fetch(memory.imagen_url);
+      if (!response.ok) {
+        throw new Error('Error downloading image');
+      }
+
+      const blob = await response.blob();
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `recuerdo_${memory.id}_${Date.now()}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      addToast('📸 Foto descargada', 'success');
+    } catch (error) {
+      console.error('Error downloading photo:', error);
+      addToast('❌ Error al descargar la foto', 'error');
+    } finally {
+      setIsDownloadingPhoto(false);
+    }
   };
 
   return (
@@ -160,15 +196,24 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({ memory, onDelete, onMemo
           <div className="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
             <button
               onClick={handleExport}
-              disabled={isDeleting || isExporting}
+              disabled={isDeleting || isExporting || isDownloadingPhoto}
               className="flex-1 px-3 py-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-sm font-semibold rounded transition-all duration-300 hover:shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
             >
               {isExporting ? '⏳' : '📥'} Guardar
             </button>
+            {memory.imagen_url && (
+              <button
+                onClick={handleDownloadPhoto}
+                disabled={isDeleting || isExporting || isDownloadingPhoto}
+                className="flex-1 px-3 py-2 bg-gradient-to-r from-blue-400 to-cyan-400 hover:from-blue-500 hover:to-cyan-500 text-white text-sm font-semibold rounded transition-all duration-300 hover:shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
+              >
+                {isDownloadingPhoto ? '⏳' : '🖼️'} Foto
+              </button>
+            )}
             {onDelete && (
               <button
                 onClick={handleDeleteClick}
-                disabled={isDeleting || isExporting}
+                disabled={isDeleting || isExporting || isDownloadingPhoto}
                 className="px-3 py-2 bg-red-400/20 hover:bg-red-400/40 text-red-700 dark:text-red-300 text-sm font-semibold rounded transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transform md:translate-y-1 md:group-hover:translate-y-0 disabled:opacity-50"
               >
                 {isDeleting ? '⏳' : '🗑️'}
