@@ -58,6 +58,14 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
     }
   };
 
+  const openFileInput = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isLoading && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       handleImageSelect(e.target.files[0]);
@@ -66,6 +74,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with data:', { formData, imageFile });
 
     if (!formData.titulo.trim() || !formData.poema.trim()) {
       addToast('⚠️ Por favor completa el título y la información', 'warning');
@@ -79,12 +88,27 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
 
       // Upload image if selected
       if (imageFile) {
+        console.log('Uploading image:', imageFile.name, imageFile.size);
         addToast('📸 Subiendo imagen a la nube...', 'info');
         const tempId = Date.now().toString();
-        imageUrl = await uploadMemoryImage(imageFile, tempId);
+        try {
+          imageUrl = await uploadMemoryImage(imageFile, tempId);
+          console.log('Image uploaded successfully:', imageUrl);
+        } catch (imageError) {
+          console.error('Image upload failed:', imageError);
+          addToast('⚠️ Error al subir la imagen, guardando sin ella', 'warning');
+        }
       }
 
       // Create memory record in Supabase
+      console.log('Creating memory with:', {
+        titulo: formData.titulo,
+        poema: formData.poema,
+        fecha: formData.fecha,
+        imageUrl,
+        tags: formData.tags,
+      });
+
       const newMemory = await createMemory(
         formData.titulo,
         formData.poema,
@@ -96,6 +120,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
         formData.fecha
       );
 
+      console.log('Memory created successfully:', newMemory);
       onSave(newMemory);
       setFormData({ titulo: '', poema: '', fecha: new Date().toISOString().split('T')[0], tags: '' });
       setImageFile(null);
@@ -105,8 +130,9 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
       }
     } catch (error) {
       console.error('Error saving memory:', error);
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
       addToast(
-        '❌ Error al guardar el recuerdo. Intenta de nuevo',
+        `❌ Error al guardar: ${errorMsg}`,
         'error'
       );
     } finally {
@@ -127,7 +153,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="mb-12 p-8 rounded-2xl bg-gradient-to-br from-pink-100/50 to-purple-100/50 dark:from-pink-900/30 dark:to-purple-900/30 border border-white/50 dark:border-white/10 backdrop-blur-sm md:mb-12 pb-28 md:pb-8"
+      className="mb-12 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-pink-100/50 to-purple-100/50 dark:from-pink-900/30 dark:to-purple-900/30 border border-white/50 dark:border-white/10 backdrop-blur-sm md:mb-12 pb-40 md:pb-8"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
@@ -167,8 +193,11 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
           <div
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            className="relative border-2 border-dashed border-pink-300 dark:border-pink-700 rounded-lg p-8 text-center bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 transition-colors cursor-pointer"
-            onClick={() => !isLoading && fileInputRef.current?.click()}
+            onClick={openFileInput}
+            onTouchEnd={openFileInput}
+            className="relative border-2 border-dashed border-pink-300 dark:border-pink-700 rounded-lg p-8 text-center bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 transition-colors cursor-pointer active:bg-white/70 dark:active:bg-white/15"
+            role="button"
+            tabIndex={0}
           >
             <input
               ref={fileInputRef}
@@ -242,11 +271,11 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
         </div>
 
         {/* Buttons - Sticky on mobile */}
-        <div className="fixed bottom-0 left-0 right-0 md:relative md:flex gap-4 pt-4 md:pt-6 bg-gradient-to-br from-pink-100/50 to-purple-100/50 dark:from-pink-900/30 dark:to-purple-900/30 md:bg-transparent p-4 md:p-0 flex gap-4 border-t md:border-t-0 border-white/20 md:border-white/0">
+        <div className="fixed bottom-0 left-0 right-0 md:relative md:flex gap-4 pt-4 md:pt-6 bg-gradient-to-t from-pink-100 to-pink-100/80 dark:from-pink-900/50 dark:to-pink-900/20 md:bg-transparent p-4 md:p-0 flex gap-4 border-t md:border-t-0 border-white/30 md:border-white/0 z-40">
           <button
             type="submit"
             disabled={isLoading}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-lg transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-6 py-4 md:py-3 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold rounded-lg transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 md:active:scale-100"
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
@@ -266,7 +295,7 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 px-6 py-3 bg-gray-300/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-bold rounded-lg transition-all hover:bg-gray-400/50 dark:hover:bg-gray-600/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-6 py-4 md:py-3 bg-gray-300/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 font-bold rounded-lg transition-all hover:bg-gray-400/50 dark:hover:bg-gray-600/50 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 md:active:scale-100"
           >
             Cancelar
           </button>
