@@ -66,7 +66,7 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({ isVisible, onClo
                 transition={{ delay: 0.7, duration: 0.8 }}
                 className="mb-8 text-lg text-gray-700 dark:text-gray-300 leading-relaxed max-w-md mx-auto"
               >
-                Un universo digital de recuerdos, emociones y amor. Explora tus sentimientos en este lugar mágico diseñado especialmente para ti, Silvi.
+                Un universo digital de recuerdos, algunos buenos y otros malos, estados de animo, amistad y amor. Hace tiempo te dije que estaba programando algo chulo. Me preguntaste que si tenias que ver, y pues como verás no es que tengas que ver, es que es para ti. Aun que se que no se te da bien la tecnologia JAJA.
               </motion.p>
 
               <motion.div
