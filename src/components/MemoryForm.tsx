@@ -25,21 +25,31 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
   const { addToast } = useToast();
 
   const handleImageSelect = (file: File) => {
+    console.log('🔹 Validating image:', file.name, file.size, file.type);
+    
     if (!file.type.startsWith('image/')) {
+      console.error('❌ Not an image file:', file.type);
       addToast('⚠️ Por favor selecciona una imagen válida', 'warning');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
+      console.error('❌ File too large:', file.size);
       addToast('⚠️ La imagen es demasiado grande (máximo 5MB)', 'warning');
       return;
     }
 
+    console.log('✅ Image validated, setting file state');
     setImageFile(file);
 
     const reader = new FileReader();
     reader.onload = (e) => {
+      console.log('✅ Image preview created');
       setImagePreview(e.target?.result as string);
+    };
+    reader.onerror = (error) => {
+      console.error('❌ Error reading file:', error);
+      addToast('❌ Error al leer la imagen', 'error');
     };
     reader.readAsDataURL(file);
   };
@@ -58,17 +68,19 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
     }
   };
 
-  const openFileInput = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isLoading && fileInputRef.current) {
-      fileInputRef.current.click();
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('🔹 File selected:', e.target.files);
+    if (e.target.files && e.target.files.length > 0) {
+      handleImageSelect(e.target.files[0]);
+      // Reset for next selection
+      e.target.value = '';
     }
   };
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleImageSelect(e.target.files[0]);
+  const triggerFileInput = () => {
+    console.log('🔹 Trigger file input, ref:', fileInputRef.current);
+    if (fileInputRef.current && !isLoading) {
+      fileInputRef.current.click();
     }
   };
 
@@ -214,19 +226,19 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
           <div
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            onClick={openFileInput}
-            onTouchEnd={openFileInput}
-            className="relative border-2 border-dashed border-pink-300 dark:border-pink-700 rounded-lg p-8 text-center bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 transition-colors cursor-pointer active:bg-white/70 dark:active:bg-white/15"
-            role="button"
-            tabIndex={0}
+            onClick={triggerFileInput}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              triggerFileInput();
+            }}
+            className="relative border-2 border-dashed border-pink-300 dark:border-pink-700 rounded-lg p-8 text-center bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 transition-colors cursor-pointer"
           >
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
               onChange={handleFileInputChange}
-              disabled={isLoading}
-              className="hidden"
+              className="absolute -top-96 -left-96 opacity-0 pointer-events-none"
             />
             {imagePreview ? (
               <div className="space-y-4">
