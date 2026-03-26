@@ -84,6 +84,15 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
     }
   };
 
+  const handleUploadAreaClick = (e: React.MouseEvent) => {
+    // Don't trigger file input if clicking the remove button
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
+    triggerFileInput();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('🔹 Form submitted with data:', { formData, imageFile });
@@ -226,8 +235,13 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
           <div
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            onClick={triggerFileInput}
+            onClick={handleUploadAreaClick}
             onTouchEnd={(e) => {
+              // Don't trigger file input if tapping the remove button
+              const target = e.target as HTMLElement;
+              if (target.closest('button')) {
+                return;
+              }
               e.preventDefault();
               triggerFileInput();
             }}
