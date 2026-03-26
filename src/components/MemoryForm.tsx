@@ -241,11 +241,11 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
               className="absolute -top-96 -left-96 opacity-0 pointer-events-none"
             />
             {imagePreview ? (
-              <div className="space-y-4">
+              <div className="relative inline-block mx-auto">
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="max-h-48 mx-auto rounded-lg object-cover"
+                  className="max-h-48 rounded-lg object-cover"
                 />
                 <button
                   type="button"
@@ -254,9 +254,10 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
                     removeImage();
                   }}
                   disabled={isLoading}
-                  className="text-red-500 hover:text-red-700 text-sm font-semibold disabled:opacity-50"
+                  className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-lg transition-colors disabled:opacity-50"
+                  title="Eliminar imagen"
                 >
-                  ✕ Cambiar imagen
+                  ✕
                 </button>
               </div>
             ) : (
@@ -324,19 +325,6 @@ export const MemoryForm: React.FC<MemoryFormProps> = ({ onSave, onCancel }) => {
               '💾 Guardar Recuerdo'
             )}
           </button>
-          {imageFile && (
-            <button
-              type="button"
-              onClick={() => {
-                removeImage();
-                addToast('📸 Imagen removida. Ahora podrás guardar sin ella', 'info');
-              }}
-              disabled={isLoading}
-              className="px-4 py-4 md:py-3 md:px-6 bg-orange-400/30 hover:bg-orange-400/50 dark:hover:bg-orange-400/40 text-orange-700 dark:text-orange-300 font-semibold rounded-lg transition-all disabled:opacity-50 text-sm md:text-base active:scale-95 md:active:scale-100"
-            >
-              ⚠️ Sin imagen
-            </button>
-          )}
           <button
             type="button"
             onClick={onCancel}
